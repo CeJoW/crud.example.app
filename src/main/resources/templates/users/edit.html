@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit form</title>
+</head>
+<body>
+<header>
+    <div th:replace="fragments/navigationBar :: navigationBar"></div>
+</header>
+
+<form th:method="patch" th:action="@{/users/{id}/edit(id=${user.getId()})}" th:object="${user}">
+
+    <label for="login">Login: </label>
+    <input type="text" th:field="*{login}" id="login"/>
+
+    <label for="password">Password: </label>
+    <input type="text" th:field="*{password}" id="password"/>
+
+    <input type="submit" value="Save"/>
+</form>
+
+</body>
+</html>

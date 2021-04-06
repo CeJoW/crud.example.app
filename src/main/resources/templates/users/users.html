@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<header>
+    <div th:replace="fragments/navigationBar :: navigationBar"></div>
+</header>
+
+<button th:onclick="|window.location.href='@{/users/new}'|">
+    Insert record
+</button>
+
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Login</th>
+        <th>Password</th>
+    </tr>
+    <th:block th:each="userRow : ${users}">
+        <tr>
+            <td th:text="${userRow.id}"></td>
+            <td th:text="${userRow.login}"></td>
+            <td th:text="${userRow.password}"></td>
+            <td>
+                <button th:onclick="|window.location.href='@{/users/{id}/edit(id=${userRow.getId()})}'|">
+                    Edit record
+                </button>
+            </td>
+            <td>
+                <form th:method="delete" th:action="@{/users/{id}/delete(id=${userRow.getId()})}">
+                    <input type="submit" value="Delete record"/>
+                </form>
+            </td>
+        </tr>
+    </th:block>
+</table>
+
+<footer></footer>
+</body>
+</html>
