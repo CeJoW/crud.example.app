@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 public class InitData {
@@ -30,10 +32,12 @@ public class InitData {
         roleRepository.save(adminRole);
         Role clientRole = new Role("ROLE_USER");
         roleRepository.save(clientRole);
+        List<Role> roles = new ArrayList<>();
+        roles.add(adminRole);
+        roles.add(clientRole);
+        userRepository.save(new User("admin", bCryptEncoderConfig.passwordEncoder().encode("123"), roles));
 
-        userRepository.save(new User("admin", bCryptEncoderConfig.passwordEncoder().encode("123"), Collections.singletonList(adminRole), true));
-
-        userRepository.save(new User("client", bCryptEncoderConfig.passwordEncoder().encode("123"), Collections.singletonList(clientRole), true));
+        userRepository.save(new User("client", bCryptEncoderConfig.passwordEncoder().encode("123"), Collections.singletonList(clientRole)));
 
         for (int i = 0; i < 5; i++) {
             User user = new User(faker.superhero().name(), bCryptEncoderConfig.passwordEncoder().encode(faker.animal().name()));

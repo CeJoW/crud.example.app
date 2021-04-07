@@ -1,5 +1,6 @@
 package com.cejow.crud.example.app.controller;
 
+import com.cejow.crud.example.app.dao.RoleRepository;
 import com.cejow.crud.example.app.model.User;
 import com.cejow.crud.example.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @GetMapping
     public ModelAndView getAllUsers() {
@@ -23,6 +26,7 @@ public class UserController {
     public ModelAndView newUserForm() {
         ModelAndView modelAndView = new ModelAndView("/users/new");
         modelAndView.addObject("user", new User());
+        modelAndView.addObject("roles", roleRepository.findAll());
         return modelAndView;
     }
 
@@ -36,6 +40,7 @@ public class UserController {
     public ModelAndView editUserForm(@PathVariable("id") long id) {
         ModelAndView modelAndView = new ModelAndView("/users/edit");
         modelAndView.addObject("user", userService.getUser(id));
+        modelAndView.addObject("roles", roleRepository.findAll());
         return modelAndView;
     }
 
@@ -45,7 +50,7 @@ public class UserController {
         return getAllUsers();
     }
 
-    @PostMapping("/{id}/delete")
+    @GetMapping("/{id}/delete")
     public ModelAndView deleteUser(@PathVariable("id") long id) {
         userService.deleteUser(id);
         return getAllUsers();

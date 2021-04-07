@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,6 +20,9 @@ public class Role {
 
     @Column(unique = true, nullable = false)
     private String roleName;
+
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
+    private List<User> usersList = new ArrayList<>();
 
     public Role(String roleName) {
         this.roleName = roleName;

@@ -26,10 +26,7 @@ public class User {
     @HashCodeExclude
     private String password;
 
-    @Column
-    private boolean active;
-
-    @OneToMany(targetEntity = Role.class, mappedBy = "roleId", fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 
     public User(String login, String password) {
@@ -37,10 +34,9 @@ public class User {
         this.password = password;
     }
 
-    public User(String login, String password, List<Role> roles, boolean active) {
+    public User(String login, String password, List<Role> roles) {
         this.login = login;
         this.password = password;
         this.roles = roles;
-        this.active = active;
     }
 }

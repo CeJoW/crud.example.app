@@ -36,13 +36,11 @@ public class UserDetailService implements UserDetailsService {
 
         private final String userName;
         private final String password;
-        private final boolean active;
         private final List<GrantedAuthority> authorities;
 
         public UserDetailsInApp(User user) {
             this.userName = user.getLogin();
             this.password = user.getPassword();
-            this.active = user.isActive();
             this.authorities = user.getRoles()
                     .stream()
                     .map(Role::getRoleName)
@@ -82,7 +80,7 @@ public class UserDetailService implements UserDetailsService {
 
         @Override
         public boolean isEnabled() {
-            return active;
+            return true;
         }
     }
 }

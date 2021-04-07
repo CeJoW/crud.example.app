@@ -18,6 +18,8 @@
         <th>Id</th>
         <th>Login</th>
         <th>Password</th>
+        <th>Roles</th>
+        <th>Actions</th>
     </tr>
     <th:block th:each="userRow : ${users}">
         <tr>
@@ -25,14 +27,19 @@
             <td th:text="${userRow.login}"></td>
             <td th:text="${userRow.password}"></td>
             <td>
+                <th:block th:each="roleRow : ${userRow.getRoles()}">
+                   <li th:text="${roleRow.getRoleName()}"/>
+                </th:block>
+            </td>
+            <td>
                 <button th:onclick="|window.location.href='@{/users/{id}/edit(id=${userRow.getId()})}'|">
                     Edit record
                 </button>
             </td>
             <td>
-                <form th:method="delete" th:action="@{/users/{id}/delete(id=${userRow.getId()})}">
-                    <input type="submit" value="Delete record"/>
-                </form>
+                <button>
+                    <a th:href="@{/users/{id}/delete(id=${userRow.getId()})}">Delete record</a>
+                </button>
             </td>
         </tr>
     </th:block>
