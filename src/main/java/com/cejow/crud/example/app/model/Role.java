@@ -20,9 +20,9 @@ public class Role {
 
     @Column(unique = true, nullable = false)
     private String roleName;
-
-    @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
-    private List<User> usersList = new ArrayList<>();
+//
+//    @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+//    private List<User> usersList = new ArrayList<>();
 
     public Role(String roleName) {
         this.roleName = roleName;

@@ -1,5 +1,9 @@
 package com.cejow.crud.example.app.config;
 
+import com.cejow.crud.example.app.filters.CustomAuthenticationFilter;
+import com.cejow.crud.example.app.handlers.AuthenticationFailedHandler;
+import com.cejow.crud.example.app.handlers.AuthenticationSuccessHandler;
+import com.cejow.crud.example.app.handlers.CustomLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -23,6 +27,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+    @Autowired
+    private AuthenticationFailedHandler authenticationFailedHandler;
+    @Autowired
+    private CustomLogoutHandler customLogoutHandler;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
@@ -31,25 +42,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                    .antMatchers("/registration").permitAll()
-                    .antMatchers("/users").authenticated()
-                    .antMatchers("/users/**").hasRole("ADMIN")
-                    .anyRequest().authenticated()
+                    .antMatchers("/main", "/registration").permitAll()
+                    .antMatchers("/users", "/roles").authenticated()
+                    .antMatchers("/users/**", "/roles/**").hasRole("ADMIN")
+                   // .anyRequest().authenticated()
                 .and()
+                    .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                     .formLogin()
-                    .loginPage("/login")
-                    .usernameParameter("login")
-                    .defaultSuccessUrl("/users", true)
-                    .failureUrl("/login?error=true")
                     .permitAll()
                 .and()
                     .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/login")
+                    .logoutUrl("/logout")
+                    //.addLogoutHandler(customLogoutHandler)
+                    .logoutSuccessHandler(customLogoutHandler)
+                    .deleteCookies()
+                    .clearAuthentication(true)
                     .permitAll()
+//                .and()
+//                    .exceptionHandling()
+//                    .accessDeniedPage("/main-page")
                 .and()
-                    .exceptionHandling()
-                    .accessDeniedPage("/accessDenied");
+                    .csrf()
+                    .disable();
     }
 
     @Bean
@@ -58,5 +72,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(userDetailsService);
         return provider;
+    }
+
+    private CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
+        CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
+        filter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+        filter.setAuthenticationFailureHandler(authenticationFailedHandler);
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setFilterProcessesUrl("/login");
+        return filter;
     }
 }
