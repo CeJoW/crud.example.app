@@ -3,6 +3,7 @@ package com.cejow.crud.example.app.controller;
 import com.cejow.crud.example.app.dao.RoleRepository;
 import com.cejow.crud.example.app.model.Role;
 import com.cejow.crud.example.app.model.User;
+import com.cejow.crud.example.app.model.UserDto;
 import com.cejow.crud.example.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class MainController {
     private RoleRepository roleRepository;
 
     @GetMapping("/users")
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         return userService.getUsers();
     }
 
@@ -29,7 +30,7 @@ public class MainController {
     }
 
     @GetMapping("/users/{id}")
-    public User getUser(@PathVariable Long id) {
+    public UserDto getUser(@PathVariable Long id) {
         return userService.getUser(id);
     }
 

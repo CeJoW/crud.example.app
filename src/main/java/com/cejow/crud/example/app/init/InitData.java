@@ -35,7 +35,10 @@ public class InitData {
         List<Role> roles = new ArrayList<>();
         roles.add(adminRole);
         roles.add(clientRole);
-        userRepository.save(new User("admin", bCryptEncoderConfig.passwordEncoder().encode("123"), roles));
+        User admin = new User("admin", bCryptEncoderConfig.passwordEncoder().encode("123"), roles);
+        admin.setVkId(38108421L);
+
+        userRepository.save(admin);
 
         userRepository.save(new User("client", bCryptEncoderConfig.passwordEncoder().encode("123"), Collections.singletonList(clientRole)));
 

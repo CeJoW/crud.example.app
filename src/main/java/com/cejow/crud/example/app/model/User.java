@@ -26,6 +26,9 @@ public class User {
     @HashCodeExclude
     private String password;
 
+    @Column
+    private long vkId;
+
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 

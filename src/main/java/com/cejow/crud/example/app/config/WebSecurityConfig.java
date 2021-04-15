@@ -45,7 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/main", "/registration").permitAll()
                     .antMatchers("/users", "/roles").authenticated()
                     .antMatchers("/users/**", "/roles/**").hasRole("ADMIN")
-                   // .anyRequest().authenticated()
                 .and()
                     .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                     .formLogin()
@@ -58,9 +57,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .deleteCookies()
                     .clearAuthentication(true)
                     .permitAll()
-//                .and()
-//                    .exceptionHandling()
-//                    .accessDeniedPage("/main-page")
                 .and()
                     .csrf()
                     .disable();

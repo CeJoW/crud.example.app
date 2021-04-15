@@ -49,6 +49,7 @@
         <thead class="table-light">
         <tr>
             <th scope="col">Id</th>
+            <th scope="col">Avatar</th>
             <th scope="col">Login</th>
             <th scope="col">Password</th>
             <th scope="col">Roles</th>
@@ -76,6 +77,8 @@
                     <input type="text" name="loginReg" id="loginReg"/>
                     <label for="passwordReg">Password: </label>
                     <input type="password" name="passwordReg" id="passwordReg"/>
+                    <label for="vkIdReg">Vk id: </label>
+                    <input type="text" name="vkIdReg" id="vkIdReg"/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -127,10 +130,13 @@
                 <div class="row">
                     <label style="display: none" for="userModalId">id: </label>
                     <input style="display: none" type="text" name="userModalId" id="userModalId"/>
+                    <img id = "avatar" src="" class="img-thumbnail" alt="...">
                     <label for="login">Login: </label>
                     <input type="text" name="login" id="login"/>
                     <label for="password">Password: </label>
                     <input type="password" name="password" id="password"/>
+                    <label for="vkId">Vk id: </label>
+                    <input type="text" name="vkId" id="vkId"/>
                     <label for="roles">Roles: </label>
                     <div id="roles"></div>
                     <p style="display: none" id="action"></p>

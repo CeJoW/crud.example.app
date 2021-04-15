@@ -15,6 +15,7 @@ function getUsers() {
         {
             success: function (resp) {
                 console.log(resp);
+                respData = resp;
                 let table = document.getElementById("usersTable").getElementsByTagName("tbody")[0];
                 table.remove();
                 let tbody = document.createElement('tbody');
@@ -60,11 +61,11 @@ function drawUsersTable(resp) {
         for (let j = 0; j < resp[i]["roles"].length; j++) {
             rolesStr += " " + resp[i]["roles"][j]["roleName"];
         }
-        addRow(resp[i]["id"], resp[i]["login"], resp[i]["password"], rolesStr);
+        addRow(resp[i]["id"], resp[i]["login"], resp[i]["password"], rolesStr, resp[i]["imgURL"]);
     }
 }
 
-function addRow(id, login, pass, roles) {
+function addRow(id, login, pass, roles, imgUrl) {
     let table = document.getElementById("usersTable").getElementsByTagName("tbody")[0];
     let tr = table.insertRow(table.rows.length);
     let td;
@@ -73,6 +74,12 @@ function addRow(id, login, pass, roles) {
     idTd.scope = "row";
     idTd.innerText = id;
     tr.insertAdjacentElement("beforeend", idTd)
+
+    let AvatarTd = document.createElement("td");
+    if (imgUrl != null) {
+        AvatarTd.innerHTML = "<img src=\"" + imgUrl + "\" class=\"img-thumbnail\" alt=\"...\">";
+    }
+    tr.insertAdjacentElement("beforeend", AvatarTd);
 
     let LoginTd = document.createElement("td");
     LoginTd.innerText = login;
@@ -208,19 +215,19 @@ function getParams() {
         data['id'] = getValue("userModalId");
     data['login'] = getValue("login");
     data['password'] = getValue("password");
+    data['vkId'] = getValue("vkId");
 
     let rolesElem = document.getElementById("roles");
-    let roles = [];
-    let role = {};
+    let rolesData = [];
     for (let i = 0; i < rolesElem.children.length; i++) {
         if (rolesElem.children[i].getElementsByTagName("input")[0].checked) {
-            role["roleId"] = rolesElem.children[i].getElementsByTagName("input")[0].id;
-            role["roleName"] = rolesElem.children[i].getElementsByTagName("label")[0].innerText;
-            roles.push(role);
+            let roleId = rolesElem.children[i].getElementsByTagName("input")[0].id;
+            let roleName = rolesElem.children[i].getElementsByTagName("label")[0].innerText;
+            rolesData.push({"roleId": roleId, "roleName":roleName});
         }
 
     }
-    data['roles'] = roles;
+    data['roles'] = rolesData;
     return JSON.stringify(data);
 }
 
@@ -228,6 +235,9 @@ function clearModal() {
     document.getElementById("userModalId").value = null;
     document.getElementById("login").value = null;
     document.getElementById("password").value = null;
+    document.getElementById("vkId").value = null;
+    document.getElementById("avatar").hidden = true;
+    document.getElementById("avatar").src = "";
     let rolesElem = document.getElementById("roles")
     for (let i = 0; i < rolesElem.children.length; i++) {
         rolesElem.children[i].getElementsByTagName("input")[0].checked = false;
@@ -239,6 +249,14 @@ function inputDataInModal(data) {
     document.getElementById("userModalId").value = data["id"];
     document.getElementById("login").value = data["login"];
     document.getElementById("password").value = data["password"];
+    document.getElementById("vkId").value = data["vkId"];
+    if (data["imgURL"] !== null) {
+        document.getElementById("avatar").hidden = false;
+        document.getElementById("avatar").src = data["imgURL"];
+    } else {
+        document.getElementById("avatar").hidden = true;
+        document.getElementById("avatar").src = "";
+    }
     let rolesElem = document.getElementById("roles")
     for (let i = 0; i < data["roles"].length; i++) {
         for (let j = 0; j < rolesElem.children.length; j++) {
@@ -303,11 +321,13 @@ function getParamsReg() {
     let data = {}
     data['login'] = getValue("loginReg");
     data['password'] = getValue("passwordReg");
+    data['vkId'] = getValue("vkIdReg");
     return JSON.stringify(data);
 }
 
 function clearModalReg() {
     document.getElementById("loginReg").value = null;
+    document.getElementById("passwordReg").value = null;
     document.getElementById("passwordReg").value = null;
 }
 
