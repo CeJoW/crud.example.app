@@ -7,6 +7,11 @@ $(document).ready(function () {
         document.getElementById("addNewUserBtn").disabled = true;
         document.getElementById("usersContainer").hidden = true;
         document.getElementById("logout").hidden = true;
+
+        if (document.cookie != null) {
+            respData = document.cookie;
+            loginInApp();
+        }
     }
 );
 
@@ -15,7 +20,6 @@ function getUsers() {
         {
             success: function (resp) {
                 console.log(resp);
-                respData = resp;
                 let table = document.getElementById("usersTable").getElementsByTagName("tbody")[0];
                 table.remove();
                 let tbody = document.createElement('tbody');
@@ -77,7 +81,7 @@ function addRow(id, login, pass, roles, imgUrl) {
 
     let AvatarTd = document.createElement("td");
     if (imgUrl != null) {
-        AvatarTd.innerHTML = "<img src=\"" + imgUrl + "\" class=\"img-thumbnail\" alt=\"...\">";
+        AvatarTd.innerHTML = "<img src=\"" + imgUrl + "\" class=\"img-thumbnail\" alt=\"...\" style='height: 100px; width: 100px'>";
     }
     tr.insertAdjacentElement("beforeend", AvatarTd);
 
@@ -223,7 +227,7 @@ function getParams() {
         if (rolesElem.children[i].getElementsByTagName("input")[0].checked) {
             let roleId = rolesElem.children[i].getElementsByTagName("input")[0].id;
             let roleName = rolesElem.children[i].getElementsByTagName("label")[0].innerText;
-            rolesData.push({"roleId": roleId, "roleName":roleName});
+            rolesData.push({"roleId": roleId, "roleName": roleName});
         }
 
     }
@@ -288,16 +292,21 @@ function loginInApp() {
                 document.getElementById("helloUser").hidden = false;
                 document.getElementById("helloUserText").innerText = "Hello, " + resp["login"];
                 document.getElementById("loginBar").hidden = true;
+                //token = document.cookie.match(/JSESSIONID=[^;]+/);
             }
         }, "POST"
     );
 }
 
 function getParamsAuth() {
+    if (respData != null)
+        return respData;
     let data = {}
     data['login'] = getValue("loginAuth");
     data['password'] = getValue("passwordAuth");
-    return JSON.stringify(data);
+    respData = JSON.stringify(data);
+    document.cookie = respData;
+    return respData;
 }
 
 function clearModalAuth() {
@@ -341,6 +350,7 @@ function logout() {
                 document.getElementById("helloUser").hidden = true;
                 document.getElementById("helloUserText").innerText = "";
                 document.getElementById("loginBar").hidden = false;
+                respData = null;
             }
         }, "POST"
     );

@@ -4,9 +4,9 @@ import com.cejow.crud.example.app.config.BCryptEncoderConfig;
 import com.cejow.crud.example.app.dao.UserRepository;
 import com.cejow.crud.example.app.exceptions.UsersNotFoundException;
 import com.cejow.crud.example.app.mapping.UserMapper;
+import com.cejow.crud.example.app.model.enums.PhotoSize;
 import com.cejow.crud.example.app.model.User;
 import com.cejow.crud.example.app.model.UserDto;
-import com.vk.api.sdk.objects.users.Fields;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,29 +26,18 @@ public class UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private VkApiClientService vkApiClientService;
+    private PhotoCacheService cache;
 
     public List<UserDto> getUsers() {
         return ((List<User>) userRepository.findAll())
                 .stream()
-                .map(obj -> userMapper.mapToUsersDro(obj, vkApiClientService.getImgUrl(obj.getVkId(), VkApiClientService.PhotoSize.SMALL)))
+                .map(obj -> userMapper.mapToUsersDro(obj, cache.getPhotoUrl(obj.getVkId(), PhotoSize.SMALL)))
                 .collect(Collectors.toList());
     }
 
-//    public List<UserDto> getUsers() {
-//        return ((List<User>) userRepository.findAll())
-//                .stream()
-//                .map(obj -> UserMapper.mapToUsersDro(obj, Fields.PHOTO_50))
-//                .collect(Collectors.toList());
-//    }
-
-//    public UserDto getUser(long id) {
-//        return UserMapper.mapToUsersDro(userRepository.findById(id).orElseThrow(() -> new UsersNotFoundException(id)), Fields.PHOTO_100);
-//    }
-
     public UserDto getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UsersNotFoundException(id));
-        return userMapper.mapToUsersDro(user, vkApiClientService.getImgUrl(user.getVkId(), VkApiClientService.PhotoSize.BIG));
+        return userMapper.mapToUsersDro(user, cache.getPhotoUrl(user.getVkId(), PhotoSize.BIG));
     }
 
     public User addUser(User user) {
